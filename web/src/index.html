@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Catalog</title>
+
+    <link href="tailwind.min.css" rel="stylesheet"> 
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold mb-8 text-gray-800">Library Catalog</h1>
+        
+        <div id="bookList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Books will be inserted here -->
+        </div>
+
+        <div id="bookDetail" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center">
+            <div class="bg-white p-8 rounded-lg max-w-2xl w-full mx-4">
+                <div id="bookDetailContent"></div>
+                <button onclick="closeBookDetail()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://library.lan:8080/api';
+
+        async function fetchBooks() {
+            try {
+                const response = await fetch(`${API_URL}/books`);
+                const books = await response.json();
+                const bookList = document.getElementById('bookList');
+                
+                bookList.innerHTML = books.map(book => `
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200">
+                        <h2 class="text-xl font-semibold mb-2">${book.title}</h2>
+                        <p class="text-gray-600 mb-2">by ${book.author}</p>
+                        <p class="text-sm text-gray-500 mb-4">${book.genre || 'Unknown Genre'}</p>
+                        <button onclick="showBookDetail(${book.id})" 
+                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            View Details
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error fetching books:', error);
+            }
+        }
+
+        async function showBookDetail(id) {
+            try {
+                const response = await fetch(`${API_URL}/books/${id}`);
+                const book = await response.json();
+                
+                const detailContent = document.getElementById('bookDetailContent');
+                detailContent.innerHTML = `
+                    <h2 class="text-2xl font-bold mb-4">${book.title}</h2>
+                    <p class="mb-2"><strong>Author:</strong> ${book.author}</p>
+                    <p class="mb-2"><strong>ISBN:</strong> ${book.isbn || 'N/A'}</p>
+                    <p class="mb-2"><strong>Publication Year:</strong> ${book.publicationYear}</p>
+                    <p class="mb-2"><strong>Genre:</strong> ${book.genre || 'Unknown'}</p>
+                    <p class="mb-2"><strong>Available Copies:</strong> ${book.availableCopies}</p>
+                    <p class="mb-4"><strong>Description:</strong> ${book.description || 'No description available.'}</p>
+                `;
+                
+                document.getElementById('bookDetail').classList.remove('hidden');
+            } catch (error) {
+                console.error('Error fetching book details:', error);
+            }
+        }
+
+        function closeBookDetail() {
+            document.getElementById('bookDetail').classList.add('hidden');
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeBookDetail();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', fetchBooks);
+    </script>
+</body>
+</html>

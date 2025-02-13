@@ -9,7 +9,6 @@ services:
       ConnectionStrings__DefaultConnection: "Host=db;Database=library_catalog;Username=library_user;Password=library_pass"
       ASPNETCORE_ENVIRONMENT: Production
 
-
   db:
     image: postgres:17.2
     environment:
@@ -32,6 +31,9 @@ services:
     image: weshigbee/course-microsvcs-web
     build:
       context: ./web
+      platforms:
+        - "linux/amd64"
+        - "linux/arm64"
     ports:
       - "8080:80"
 

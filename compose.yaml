@@ -21,6 +21,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d
+  web:
+    build:
+      context: ./web
+    ports:
+      - "8080:80"
+
 
 volumes:
   postgres_data:

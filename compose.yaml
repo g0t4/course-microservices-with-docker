@@ -8,12 +8,32 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
-  server:
+  api:
     build:
-      context: .
-      target: final
+      context: ./catalog-api/src
     ports:
       - 9000:8080
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;Database=library_catalog;Username=library_user;Password=library_pass"
+      ASPNETCORE_ENVIRONMENT: Development
+
+  db:
+    image: postgres:17.2
+    environment:
+      - POSTGRES_DB=library_catalog
+      - POSTGRES_USER=library_user
+      - POSTGRES_PASSWORD=library_pass
+      # setting these means when you exec in, psql works without any args:
+      - PGDATABASE=library_catalog
+      - PGUSER=library_user
+      - PGPASSWORD=library_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+
+volumes:
+  postgres_data:
+
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to

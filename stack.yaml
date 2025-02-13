@@ -5,6 +5,10 @@ services:
     image: weshigbee/course-microsvcs-api
     build:
       context: ./catalog-api/src
+      platforms:
+        - "linux/arm/v7"
+        - "linux/arm64"
+        - "linux/amd64"
     environment:
       ConnectionStrings__DefaultConnection: "Host=db;Database=library_catalog;Username=library_user;Password=library_pass"
       ASPNETCORE_ENVIRONMENT: Production
@@ -35,8 +39,9 @@ services:
     build:
       context: ./web
       platforms:
-        - "linux/amd64"
+        - "linux/arm/v7"
         - "linux/arm64"
+        - "linux/amd64"
     ports:
       - "8080:80"
 

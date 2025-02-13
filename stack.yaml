@@ -1,12 +1,14 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/refs/heads/main/schema/compose-spec.json
+
 services:
   api:
+    image: weshigbee/course-microsvcs-api
     build:
       context: ./catalog-api/src
-    ports:
-      - 9000:8080
     environment:
       ConnectionStrings__DefaultConnection: "Host=db;Database=library_catalog;Username=library_user;Password=library_pass"
-      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_ENVIRONMENT: Production
+
 
   db:
     image: postgres:17.2
@@ -21,12 +23,18 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d
+    deploy:
+      placement:
+        constraints:
+          - node.hostname==pi3.lan
+          # https://docs.docker.com/reference/cli/docker/service/create/#constraint
+
   web:
+    image: weshigbee/course-microsvcs-web
     build:
       context: ./web
     ports:
       - "8080:80"
-
 
 volumes:
   postgres_data:

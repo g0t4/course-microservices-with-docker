@@ -27,7 +27,6 @@ services:
       placement:
         constraints:
           - node.hostname==pi3.lan
-          # https://docs.docker.com/reference/cli/docker/service/create/#constraint
 
   web:
     image: weshigbee/course-microsvcs-web

@@ -1,0 +1,32 @@
+services:
+  api:
+    build:
+      context: ./catalog-api/src
+    ports:
+      - 9000:8080
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;Database=library_catalog;Username=library_user;Password=library_pass"
+      ASPNETCORE_ENVIRONMENT: Development
+
+  db:
+    image: postgres:17.2
+    environment:
+      - POSTGRES_DB=library_catalog
+      - POSTGRES_USER=library_user
+      - POSTGRES_PASSWORD=library_pass
+      # setting these means when you exec in, psql works without any args:
+      - PGDATABASE=library_catalog
+      - PGUSER=library_user
+      - PGPASSWORD=library_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+  web:
+    build:
+      context: ./web
+    ports:
+      - "8080:80"
+
+
+volumes:
+  postgres_data:

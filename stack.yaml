@@ -21,11 +21,14 @@ services:
       - PGPASSWORD=library_pass
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./db/init:/docker-entrypoint-initdb.d
+      # - ./db/init:/docker-entrypoint-initdb.d
     deploy:
       placement:
         constraints:
           - node.hostname==pi3.lan
+    configs:
+      - source: init_sql
+        target: /docker-entrypoint-initdb.d/init.sql
 
   web:
     image: weshigbee/course-microsvcs-web
@@ -39,3 +42,7 @@ services:
 
 volumes:
   postgres_data:
+
+configs:
+  init_sql:
+    file: ./db/init/01-init.sql

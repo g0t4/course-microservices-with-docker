@@ -38,7 +38,7 @@ spec:
         #       memory: 64Mi
 
         - name: postgres
-          image: postgres:17-alpine
+          image: postgres:17.2
           env:
             - name: POSTGRES_DB
               value: "library_catalog"

@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres
+  namespace: library1
 spec:
   serviceName: postgres
   replicas: 1
@@ -61,6 +62,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres
+  namespace: library1
 spec:
   selector:
     app: postgres
